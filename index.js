@@ -148,6 +148,20 @@ app.post('/questionario', (req, res) => {
   }
 })
 
+app.get("/questionario", (req, res) => {
+  try {
+    client.query("SELECT * FROM questionario", function (err, result) {
+      if (err) {
+        return console.error("Erro ao executar a qry de SELECT", err);
+      }
+      res.send(result.rows);
+      console.log("Rota: get questionario");
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 app.listen(config.port, () =>
   console.log("Servidor funcionando na porta " + config.port)
 );
