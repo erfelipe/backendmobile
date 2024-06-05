@@ -40,7 +40,7 @@ app.get("/usuarios", (req, res) => {
       res.send(result.rows);
       console.log("Rota: get usuarios");
     });
-  } catch (error)  {
+  } catch (error) {
     console.log(error);
   }
 });
@@ -72,7 +72,7 @@ app.delete("/usuarios/:id", (req, res) => {
           return console.error("Erro ao executar a qry de DELETE", err);
         } else {
           if (result.rowCount == 0) {
-            res.status(404).json({ info: "Registro não encontrado."  });
+            res.status(404).json({ info: "Registro não encontrado." });
           } else {
             res.status(200).json({ info: `Registro excluído. Código: ${req.params.id}` });
           }
@@ -114,7 +114,7 @@ app.put("/usuarios/:id", (req, res) => {
     client.query(
       "UPDATE Usuarios SET nome=$1, email=$2, altura=$3, peso=$4 WHERE id =$5 ",
       [nome, email, altura, peso, id],
-       (err, result) => {
+      (err, result) => {
         if (err) {
           return console.error("Erro ao executar a qry de UPDATE", err);
         } else {
@@ -129,6 +129,24 @@ app.put("/usuarios/:id", (req, res) => {
   }
 });
 
+app.post('/questionario', (req, res) => {
+  try {
+    console.log("Alguém enviou um post com os dados:", req.body);
+    const { q1, q2, q3, q4, q5 } = req.body;
+    client.query(
+      "INSERT INTO questionario (q1, q2, q3, q4, q5) VALUES ($1, $2, $3, $4, $5) RETURNING * ", [q1, q2, q3, q4, q5],
+      (err, result) => {
+        if (err) {
+          return console.error("Erro ao executar a qry de INSERT no questionario", err);
+        }
+        res.status(201).json(result.rows[0]);
+        console.log(result);
+      }
+    );
+  } catch (erro) {
+    console.error(erro);
+  }
+})
 
 app.listen(config.port, () =>
   console.log("Servidor funcionando na porta " + config.port)
